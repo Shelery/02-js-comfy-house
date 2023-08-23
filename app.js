@@ -20,7 +20,20 @@ class Products {
     try {
       let result = await fetch("products.json");
       let data = await result.json();
-      return data;
+
+      let products = Array.from(data.items);
+     
+      products = products.map(item =>{
+
+        const {title, price} = item.fields
+        const {id} = item.sys
+        const { image } = item.fields.image.fields.file.url;
+        //NOTE: image is undefined with local JSON file
+        return {title, price, id, image}
+
+      })
+      return products;
+
     } catch (error) {
       console.log(error);
     }
@@ -28,10 +41,35 @@ class Products {
 }
 // UI classes
 // displaying products
-class UI {}
+class UI {
+    displayProducts(products){
+      let result = ``;
+      products.forEach((product) => {
+        // Create the HTML element
+        result += `
+            <!-- single product -->
+            <article class="product">
+                <div class="img-container">
+                    <img src="${product.image}" alt="" class="product-img" />
+                    <button class="bag-btn" data-id=${product.id}>
+                        <i class="fas-fa-shopping-cart"></i>
+                        add to bag
+                    </button>
+                </div>
+                <h3>${product.title}</h3>
+                <h4>$ ${product.price}</h4>
+            </article>
+            <!-- end of single product -->
+            `;
+      });
+
+      // Insert it into DOM
+      productsDOM.innerHTML = result;
+    }
+}
 // Local Storage class
 class Storage {}
-
+//__________________________________________________
 // Event Listeners
 document.addEventListener("DOMContentLoaded", () => {
   //Create instances for classes
@@ -39,5 +77,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const products = new Products();
 
   // get all products
-  products.getProducts().then((data) => console.log(data));
+  products.getProducts().then((products) => 
+   ui.displayProducts(products) );
 });
