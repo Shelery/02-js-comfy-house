@@ -15,17 +15,29 @@ let cart = [];
 
 // Create Classes (objects)
 // Getting the products
-class Products{
-
+class Products {
+  async getProducts() {
+    try {
+      let result = await fetch("products.json");
+      let data = await result.json();
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 // UI classes
 // displaying products
-class UI {
-
-}
+class UI {}
 // Local Storage class
-class Storage{
-
-}
+class Storage {}
 
 // Event Listeners
+document.addEventListener("DOMContentLoaded", () => {
+  //Create instances for classes
+  const ui = new UI();
+  const products = new Products();
+
+  // get all products
+  products.getProducts().then((data) => console.log(data));
+});
